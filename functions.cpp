@@ -1,17 +1,21 @@
 #include "functions.h"
+#include "convert.h"
 #include <boost/filesystem.hpp>
 #include <algorithm>
 #include <stack>
 
 std::string currentPath = "."; // Variável global para armazenar o caminho atual
 
-// Função para listar os diretórios em um diretório
 std::vector<std::string> listDirectories(const std::string &directory) {
     std::vector<std::string> contents;
     if (boost::filesystem::exists(directory) && boost::filesystem::is_directory(directory)) {
         for (auto& entry : boost::filesystem::directory_iterator(directory)) {
-            // Adiciona tanto diretórios quanto arquivos
-            contents.push_back(entry.path().filename().string());
+            // Convert the filename to UTF-8
+            std::string filename = entry.path().filename().string();
+            std::string utf8Filename = convertToUTF8(filename, "ISO-8859-1");
+
+            // Add the filename to the contents
+            contents.push_back(utf8Filename);
         }
     }
     return contents;
